@@ -132,3 +132,58 @@ La estructura de la URL se dedujo a partir de la relación entre los recursos. `
 | GET `/users`            |    200 | 10 usuarios   |
 | GET `/todos`            |    200 | 200 tareas    |
 | GET `/posts/1/comments` |    200 | 5 comentarios |
+
+
+## 12 — Primera prueba automática
+
+Se agregó una prueba automática a la petición GET `/posts/1` utilizando JavaScript en Postman. La prueba verifica que el código de estado de la respuesta sea 200.
+
+El código utilizado fue:
+
+```javascript
+pm.test("El estado es 200", function () {
+    pm.response.to.have.status(200);
+});
+```
+
+Al ejecutar la petición, la prueba apareció en verde porque la API devolvió el código de estado esperado, 200.
+
+Posteriormente se cambió intencionalmente el valor esperado de 200 a 201. Al ejecutar nuevamente la petición, la prueba apareció en rojo porque la API continuó devolviendo 200 y este resultado no coincidía con el valor esperado.
+
+Es importante comprobar que una prueba pueda fallar porque esto permite verificar que realmente está detectando resultados diferentes a los esperados. Una prueba que solamente se observa en estado exitoso no demuestra por sí sola que esté correctamente configurada.
+
+## 13 — Pruebas automáticas propias
+
+Además de la prueba que verifica el código de estado, se crearon tres pruebas adicionales para comprobar diferentes características de la respuesta.
+
+### Prueba 1 — Existencia del campo `title`
+
+```javascript
+pm.test("La respuesta contiene el campo title", function () {
+    pm.expect(pm.response.json()).to.have.property("title");
+});
+```
+
+Esta prueba verifica que la respuesta contenga el campo `title`.
+
+### Prueba 2 — Valor del campo `id`
+
+```javascript
+pm.test("El ID del recurso es 1", function () {
+    pm.expect(pm.response.json().id).to.eql(1);
+});
+```
+
+Esta prueba comprueba que el valor del campo `id` sea exactamente `1`, ya que la petición corresponde al recurso `/posts/1`.
+
+### Prueba 3 — Tipo de dato de `userId`
+
+```javascript
+pm.test("El campo userId es un número", function () {
+    pm.expect(pm.response.json().userId).to.be.a("number");
+});
+```
+
+Esta prueba verifica que el campo `userId` sea de tipo numérico.
+
+Con estas tres pruebas adicionales, junto con la prueba del código de estado realizada en la Tarea 12, se tienen cuatro verificaciones automáticas diferentes para la respuesta de la API.
